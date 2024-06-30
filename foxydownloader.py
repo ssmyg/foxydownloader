@@ -177,25 +177,33 @@ def main():
                 chessids = oldchessids
                 names = oldnames
 
-        terminal_menu = TerminalMenu(names)
-        index = terminal_menu.show()
-        if index == None:
+        terminal_menu = TerminalMenu(names,
+            multi_select=True,
+            show_multi_select_hint=True
+        )
+        indexs = terminal_menu.show()
+
+        if indexs == None:
             print("Aborting.")
             break
-        if index == n:
+        if len(indexs) == 0:
+            print("Aborting.")
+            break
+        if n in indexs:
             lastCode = chessids[-1]
             oldchessids = chessids
             oldnames = names
         else:
-            print(f"Downloading {names[index]} ...")
-            filename=names[index]+".sgf"
-            sgf = standardize_ranks(fix_komi(download_sgf(chessids[index])))
-            if ogs_upload:
-                upload_to_ogs(filename, sgf, ogs_token_type, ogs_access_token)
-            else:
-                f = codecs.open(filename, 'w', 'utf-8')
-                f.write(sgf)
-                f.close()
+            for idx in indexs:
+                print(f"Downloading {names[idx]} ...")
+                filename=f"sgf/{names[idx]}.sgf"
+                sgf = standardize_ranks(fix_komi(download_sgf(chessids[idx])))
+                if ogs_upload:
+                    upload_to_ogs(filename, sgf, ogs_token_type, ogs_access_token)
+                else:
+                    f = codecs.open(filename, 'w', 'utf-8')
+                    f.write(sgf)
+                    f.close()
             break
 
 if __name__ == "__main__":
