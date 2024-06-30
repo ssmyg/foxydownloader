@@ -16,11 +16,11 @@ from simple_term_menu import TerminalMenu
 # seriously wtf?
 def komi_replacement(m):
     s = m.group()
-    n = int(s[3:-1])
-    if n == 0:
-        return s
-    new = str(2*n)
-    return "KM[" + new[:-2] + "." + new[-2:] + "]"
+    if s == "KM[375]":
+        return "KM[7.5]"
+    if s == "KM[650]":
+        return "KM[6.5]"
+    return s
 
 def fix_komi(sgf):
     regex = r"KM\[[1-9][0-9]*\]"
