@@ -169,6 +169,7 @@ def main():
         chessids, names = game_list(lastCode, username, uid)
         
         n = len(names)
+        names.append("select all")
         names.append("older games ...")
 
         if n == 0:
@@ -193,6 +194,9 @@ def main():
             print("Aborting.")
             break
         if n in indexs:
+            print("select all")
+            indexs = tuple(range(n))
+        if n+1 in indexs:
             lastCode = chessids[-1]
             oldchessids = chessids
             oldnames = names
