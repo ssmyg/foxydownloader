@@ -196,7 +196,7 @@ def main():
         else:
             for idx in indexs:
                 print(f"Downloading {names[idx]} ...")
-                filename=f"sgf/{names[idx]}.sgf"
+                filename=f"{names[idx]}.sgf"
                 sgf = standardize_ranks(fix_komi(download_sgf(chessids[idx])))
                 if ogs_upload:
                     upload_to_ogs(filename, sgf, ogs_token_type, ogs_access_token)
