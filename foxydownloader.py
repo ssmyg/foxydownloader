@@ -157,7 +157,10 @@ def main():
             ogs_token_type, ogs_access_token = get_ogs_token(OGS_CLIENT_ID, OGS_CLIENT_SECRET, \
                     input("OGS username: "), getpass("OGS password: "))
 
-    username = input("Fox username: ")
+    while True:
+        username = input("Fox username: ").strip()
+        if len(username) > 0:
+            break
 
     uid = get_uid(username)
 
