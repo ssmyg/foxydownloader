@@ -25,6 +25,21 @@ def fix_komi(sgf):
 def standardize_ranks(sgf):
     return sgf.replace("级","k*").replace("段","d*")
 
+def replace_id(m):
+    player = m.group()
+    tag = player[:2]
+    id = player[3:-1]
+    if id in id_name_map:
+        return f"{tag}[{id_name_map[id]}]"
+    return f"{tag}[{id}]"
+
+def id_to_name(sgf):
+    regex_pb = r"PB\[.*?\]"
+    regex_pw = r"PW\[.*?\]"
+
+    sgf_pb = re.sub(regex_pb, replace_id, sgf)
+    return re.sub(regex_pw, replace_id, sgf_pb)
+
 def get_uid(username):
     values = { 
             "srcuid":0,
@@ -71,6 +86,26 @@ def game_list(lastCode, username, uid):
         print(e)
         sys.exit(1)
 
+# id_name_map.txtを読み込んで、idとnameの対応を返す（#から始まる行は無視）
+def read_id_name_map():
+    id_name_map = {}
+    with open("id_name_map.txt", "r") as f:
+        for line in f:
+            line = line.strip()
+            if len(line) == 0:
+                continue
+            if line[0] == "#":
+                continue
+            try:
+                id, name = line.split("=")
+            except ValueError:
+                print(f"Error: {line}")
+                sys.exit(1)
+            id_name_map[id.strip()] = name.strip()
+    return id_name_map
+
+id_name_map = read_id_name_map()
+
 def download_sgf(cid):
     values = {
     "chessid": cid
@@ -88,6 +123,16 @@ def download_sgf(cid):
                 print(e)
                 sys.exit(1)
     return sgf
+
+def save_utf8(name, sgf):
+    filename=f"utf8/{name}.sgf"
+    with open(filename, 'w', encoding='utf-8') as f:
+        f.write(sgf)
+
+def save_sjis(name, sgf):
+    filename=f"sjis/{name}.sgf".encode('shift_jis', errors='replace').decode('shift_jis')
+    with open(filename, 'w', encoding='shift_jis', errors='replace') as f:
+        f.write(sgf)
 
 def main():
     while True:
@@ -136,10 +181,14 @@ def main():
         else:
             for idx in indexs:
                 print(f"Downloading {names[idx]} ...")
-                filename=f"{names[idx]}.sgf"
-                sgf = standardize_ranks(fix_komi(download_sgf(chessids[idx])))
-                with open(filename, 'w', encoding='utf-8') as f:
-                    f.write(sgf)
+                sgf = id_to_name(standardize_ranks(fix_komi(download_sgf(chessids[idx]))))
+
+                save_utf8(names[idx], sgf)
+                save_sjis(names[idx], sgf)
+
+                # filename=f"utf8/{names[idx]}.sgf"
+                # with open(filename, 'w', encoding='utf-8') as f:
+                #     f.write(sgf)
             break
 
 if __name__ == "__main__":
