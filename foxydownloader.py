@@ -213,10 +213,6 @@ def main():
 
                 save_utf8(names[idx], sgf)
                 save_sjis(names[idx], sgf)
-
-                # filename=f"utf8/{names[idx]}.sgf"
-                # with open(filename, 'w', encoding='utf-8') as f:
-                #     f.write(sgf)
             break
 
 if __name__ == "__main__":
