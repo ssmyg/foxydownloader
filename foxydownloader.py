@@ -80,7 +80,7 @@ def game_list(lastCode, username, uid):
             id = d['chessid'][10:]
             blackenname = d['blackenname']
             whiteenname = d['whiteenname']
-            names.append(starttime + ' ' + blackenname + ' VS ' + whiteenname + ' (' + id + ')' )
+            names.append(f"{starttime} {id} {blackenname} VS {whiteenname}")
         return chessid, names
     except Exception as e:
         print(e)

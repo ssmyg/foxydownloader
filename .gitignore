@@ -1,3 +1,6 @@
 *.code-workspace
-sgf/*
+
 *.sgf
+*.json
+
+.env
