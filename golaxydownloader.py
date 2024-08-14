@@ -32,7 +32,7 @@ def game_list(page):
     chessid = []
     names = []
  
-    page_size = 20
+    page_size = 50
     url = f"https://www.19x19.com/api/engine/games/{USER_ID}?game_type=1&page={page}&size={page_size}&username={USER_ID}"
     try:
         res = requests.get(url)
