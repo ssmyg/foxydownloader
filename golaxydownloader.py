@@ -4,7 +4,7 @@
 import requests
 import re
 from simple_term_menu import TerminalMenu
-
+import sys
 from dotenv import load_dotenv
 import os
 import json
