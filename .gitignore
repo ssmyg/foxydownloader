@@ -5,3 +5,5 @@
 *.html
 
 .env
+
+__pycache__/
