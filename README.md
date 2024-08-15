@@ -11,9 +11,10 @@ Script to download SGF-Files from Golaxy
 
 ## Requirements
 - python v3.x
-- the modules `simple-term-menu`, `pyyaml`, `appdirs`, and `python-dotenv`
+
+- install the modules
   ``` 
-  pip install simple-term-menu pyyaml appdirs python-dotenv
+  pip install simple-term-menu pyyaml appdirs python-dotenv beautifulsoup4 lxml
   ```
   Note that `simple-term-menu` doesn't work in Windows terminals. If you are using Windows it's best to us this script from the Windows Subsystem for Linux (WSL, https://docs.microsoft.com/en-us/windows/wsl/install)
 

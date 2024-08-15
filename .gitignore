@@ -2,5 +2,6 @@
 
 *.sgf
 *.json
+*.html
 
 .env
