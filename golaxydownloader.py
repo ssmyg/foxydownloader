@@ -40,6 +40,10 @@ def game_list(page):
         print(e)
         sys.exit(1)
 
+    if not res.ok:
+        print("Error: ", res)
+        sys.exit(1)
+
     res.encoding="utf-8"
     res_json = res.json()
 
@@ -105,6 +109,10 @@ def download_sgf(cid):
         res = requests.get(url)
     except Exception as e:
         print(e)
+        sys.exit(1)
+
+    if not res.ok:
+        print("Error: ", res)
         sys.exit(1)
 
     res.encoding="utf-8"
