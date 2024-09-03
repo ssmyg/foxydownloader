@@ -70,7 +70,7 @@ def save_sjis(name, sgf):
     name = ''.join(map(apply_utf8_sjis_map, name))
     sgf = ''.join(map(apply_utf8_sjis_map, sgf))
 
-    filename=f"sjis/{name}.sgf".encode('shift_jis', errors='replace').decode('shift_jis')
+    filename=f"sjis/{name}.sgf".encode('shift_jis', errors='replace').decode('shift_jis').replace("?", "_")
     with open(filename, 'w', encoding='shift_jis', errors='replace') as f:
         f.write(sgf)
 
