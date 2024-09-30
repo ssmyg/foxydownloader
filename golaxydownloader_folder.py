@@ -15,15 +15,12 @@ load_dotenv()
 USER_ID = os.getenv("USER_ID")
 
 
-def game_list(page, seach_key):
+def game_list(page):
     chessid = []
     names = []
 
     page_size = 50
-    url = f"https://www.19x19.com/api/engine/games/{USER_ID}?game_type=1&page={page}&size={page_size}&username={USER_ID}"
-    if len(seach_key) > 0:
-        url = f"https://www.19x19.com/api/engine/games/search/{USER_ID}?key={seach_key}&game_type=1&page={page}&size={page_size}&username={USER_ID}"
-
+    url = f"https://www.19x19.com/api/engine/situations/{USER_ID}/默认?folder=默认&username={USER_ID}"
     try:
         res = requests.get(url)
     except Exception as e:
@@ -44,13 +41,14 @@ def game_list(page, seach_key):
     if res_json["code"] != "0":
         print("Error: ", res_json["msg"])
         sys.exit(1)
-    chesslist = res_json["data"]["gameMetaList"]
+    chesslist = res_json["data"]
 
     for d in chesslist:
         chessid.append(d["id"])
         dt = d["createTime"]
+
         names.append(
-            f"{dt['date']['year']}.{dt['date']['month']}.{dt['date']['day']} {d['id']} {d['pb']} VS {d['pw']}"
+            f"{dt['date']['year']}.{dt['date']['month']}.{dt['date']['day']} {d['id']} {d['name']}"
         )
     return chessid, names
 
@@ -83,11 +81,9 @@ def download_sgf(cid):
 
 
 def main():
-    seach_key = input("search: ").strip()
-
     page = 0
     while True:
-        chessids, names = game_list(page, seach_key)
+        chessids, names = game_list(page)
 
         n = len(names)
         names.append("select all")
