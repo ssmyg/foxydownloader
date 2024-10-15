@@ -50,7 +50,7 @@ def game_list(page, seach_key):
     for d in chesslist:
         chessid.append(d["id"])
         dt = d["createTime"]
-        name = f"{dt['date']['year']}.{dt['date']['month']}.{dt['date']['day']} {d['id']} {d['gamename'].replace('dummydummy','')} {d['pb']} VS {d['pw']}"
+        name = f"{dt['date']['year']}.{dt['date']['month']}.{dt['date']['day']} {d['gamename'].replace('dummydummy','')} {d['pb']} VS {d['pw']}"
         if len(name) > 60:
             name = name[:60] + " ..."
         names.append(name)
