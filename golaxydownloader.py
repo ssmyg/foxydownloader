@@ -18,6 +18,7 @@ USER_ID = os.getenv("USER_ID")
 def game_list(page, seach_key):
     chessid = []
     names = []
+    gamenames = []
 
     page_size = 50
     url = f"https://www.19x19.com/api/engine/games/{USER_ID}?game_type=1&page={page}&size={page_size}&username={USER_ID}"
@@ -49,13 +50,30 @@ def game_list(page, seach_key):
     for d in chesslist:
         chessid.append(d["id"])
         dt = d["createTime"]
-        names.append(
-            f"{dt['date']['year']}.{dt['date']['month']}.{dt['date']['day']} {d['id']} {d['pb']} VS {d['pw']}"
-        )
-    return chessid, names
+        name = f"{dt['date']['year']}.{dt['date']['month']}.{dt['date']['day']} {d['id']} {d['gamename'].replace('dummydummy','')} {d['pb']} VS {d['pw']}"
+        if len(name) > 60:
+            name = name[:60] + " ..."
+        names.append(name)
+        gamenames.append(d["gamename"])
+
+    return chessid, names, gamenames
 
 
-def download_sgf(cid):
+def format_date(sgf):
+    # 文字列DT[YYYY-MM-DD HH:mm:ss]をDT[YYYY-MM-DD]に置換
+    sgf = re.sub(
+        r"DT\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}", lambda x: x.group(0)[:13], sgf
+    )
+    return sgf
+
+
+def add_gamename(gamename, sgf):
+    if "GN[" in sgf:
+        return sgf
+    return sgf.replace("PW[", f"GN[{gamename}]PW[")
+
+
+def download_sgf(cid, gamename):
     url = f"https://www.19x19.com/api/engine/games/guest/{cid}"
 
     try:
@@ -79,7 +97,7 @@ def download_sgf(cid):
         print("Error: ", res_json["msg"])
         sys.exit(1)
 
-    return res_json["data"]["sgf"]
+    return add_gamename(gamename, format_date(res_json["data"]["sgf"]))
 
 
 def main():
@@ -87,7 +105,7 @@ def main():
 
     page = 0
     while True:
-        chessids, names = game_list(page, seach_key)
+        chessids, names, gamename = game_list(page, seach_key)
 
         n = len(names)
         names.append("select all")
@@ -117,7 +135,7 @@ def main():
             for idx in indexs:
                 print(f"Downloading {names[idx]} ...")
 
-                sgf = id_to_name(download_sgf(chessids[idx]))
+                sgf = id_to_name(download_sgf(chessids[idx], gamename[idx]))
 
                 save_utf8(names[idx], sgf)
                 save_sjis(names[idx], sgf)
