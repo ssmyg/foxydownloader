@@ -15,15 +15,15 @@ load_dotenv()
 USER_ID = os.getenv("USER_ID")
 
 
-def game_list(page, seach_key):
+def game_list(page, seach_key, game_type):
     chessid = []
     names = []
     gamenames = []
 
     page_size = 50
-    url = f"https://www.19x19.com/api/engine/games/{USER_ID}?game_type=1&page={page}&size={page_size}&username={USER_ID}"
+    url = f"https://www.19x19.com/api/engine/games/{USER_ID}?game_type={game_type}&page={page}&size={page_size}&username={USER_ID}"
     if len(seach_key) > 0:
-        url = f"https://www.19x19.com/api/engine/games/search/{USER_ID}?key={seach_key}&game_type=1&page={page}&size={page_size}&username={USER_ID}"
+        url = f"https://www.19x19.com/api/engine/games/search/{USER_ID}?key={seach_key}&game_type={game_type}&page={page}&size={page_size}&username={USER_ID}"
 
     try:
         res = requests.get(url)
@@ -101,15 +101,19 @@ def download_sgf(cid, gamename):
 
 
 def main():
+    game_type_menu = TerminalMenu(["対人", "対AI"])
+    game_type = game_type_menu.show()
+    game_type = 1 - game_type
+
     seach_key = input("search: ").strip()
 
     page = 0
     while True:
-        chessids, names, gamename = game_list(page, seach_key)
+        chessids, names, gamename = game_list(page, seach_key, game_type)
 
         n = len(names)
-        names.append("select all")
-        names.append("older games ...")
+        names.append("全て選択")
+        names.append("次のページ >>")
 
         if n == 0:
             print("No games found. Exiting.")
