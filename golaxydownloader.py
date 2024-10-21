@@ -50,7 +50,8 @@ def game_list(page, seach_key, game_type):
     for d in chesslist:
         chessid.append(d["id"])
         dt = d["createTime"]
-        name = f"{dt['date']['year']}.{dt['date']['month']}.{dt['date']['day']} {d['id']} {d['gamename'].replace('dummydummy','')} {d['pb']} VS {d['pw']}"
+        date_str = f"{dt['date']['year']}-{str(dt['date']['month']).zfill(2)}-{str(dt['date']['day']).zfill(2)}"
+        name = f"{date_str} {d['id']} {d['gamename'].replace('dummydummy','')} {d['pb']} VS {d['pw']}"
         if len(name) > 60:
             name = name[:60] + " ..."
         names.append(name)
@@ -59,11 +60,14 @@ def game_list(page, seach_key, game_type):
     return chessid, names, gamenames
 
 
-def format_date(sgf):
+def format_date(filename, sgf):
     # 文字列DT[YYYY-MM-DD HH:mm:ss]をDT[YYYY-MM-DD]に置換
     sgf = re.sub(
         r"DT\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}", lambda x: x.group(0)[:13], sgf
     )
+    # DT[が存在しない場合は作成日を追加
+    if "DT[" not in sgf:
+        sgf = sgf.replace("PB[", f"DT[{filename[:10]}]PB[")
     return sgf
 
 
@@ -73,7 +77,7 @@ def add_gamename(gamename, sgf):
     return sgf.replace("PW[", f"GN[{gamename}]PW[")
 
 
-def download_sgf(cid, gamename):
+def download_sgf(cid, gamename, filename):
     url = f"https://www.19x19.com/api/engine/games/guest/{cid}"
 
     try:
@@ -97,7 +101,7 @@ def download_sgf(cid, gamename):
         print("Error: ", res_json["msg"])
         sys.exit(1)
 
-    return add_gamename(gamename, format_date(res_json["data"]["sgf"]))
+    return add_gamename(gamename, format_date(filename, res_json["data"]["sgf"]))
 
 
 def main():
@@ -139,7 +143,7 @@ def main():
             for idx in indexs:
                 print(f"Downloading {names[idx]} ...")
 
-                sgf = id_to_name(download_sgf(chessids[idx], gamename[idx]))
+                sgf = id_to_name(download_sgf(chessids[idx], gamename[idx], names[idx]))
 
                 save_utf8(names[idx], sgf)
                 save_sjis(names[idx], sgf)
