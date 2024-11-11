@@ -159,8 +159,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
-    print(format_date("9999-99-99", "aaaaDT[2022-3-1]PB[xx]bbbb"))
-    print(format_date("9999-99-99", "aaaaDT[2022-3-1 12:34:56]PB[xx]bbbb"))
-    print(format_date("9999-99-99", "aaaaPB[xx]bbbb"))
-    print(format_date("9999-99-99", "aaaaDT[2022-03-01]bbbb"))
+    main()
