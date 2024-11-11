@@ -60,11 +60,19 @@ def game_list(page, seach_key, game_type):
     return chessid, names, gamenames
 
 
+def zfill_date(match):
+    year, month, day = match.groups()
+    # ゼロ埋めしてフォーマット
+    return f"DT[{year}-{int(month):02d}-{int(day):02d}"
+
+
 def format_date(filename, sgf):
+    sgf = re.sub(r"DT\[(\d{4})-(\d{1,2})-(\d{1,2})", lambda x: zfill_date(x), sgf)
     # 文字列DT[YYYY-MM-DD HH:mm:ss]をDT[YYYY-MM-DD]に置換
     sgf = re.sub(
-        r"DT\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}", lambda x: x.group(0)[:13], sgf
+        r"DT\[\d{4}-\d{2}-\d{2} \d{1,2}:\d{1,2}:\d{1,2}", lambda x: x.group(0)[:13], sgf
     )
+
     # DT[が存在しない場合は作成日を追加
     if "DT[" not in sgf:
         sgf = sgf.replace("PB[", f"DT[{filename[:10]}]PB[")
@@ -151,4 +159,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    print(format_date("9999-99-99", "aaaaDT[2022-3-1]PB[xx]bbbb"))
+    print(format_date("9999-99-99", "aaaaDT[2022-3-1 12:34:56]PB[xx]bbbb"))
+    print(format_date("9999-99-99", "aaaaPB[xx]bbbb"))
+    print(format_date("9999-99-99", "aaaaDT[2022-03-01]bbbb"))
