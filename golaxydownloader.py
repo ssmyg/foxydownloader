@@ -125,6 +125,7 @@ def main():
 
         n = len(names)
         names.append("全て選択")
+        names.append("<< 前のページ")
         names.append("次のページ >>")
 
         if n == 0:
@@ -146,6 +147,9 @@ def main():
             print("select all")
             indexs = tuple(range(n))
         if n + 1 in indexs:
+            if page != 0:
+                page = page - 1
+        elif n + 2 in indexs:
             page = page + 1
         else:
             for idx in indexs:
