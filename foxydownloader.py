@@ -35,7 +35,7 @@ def get_uid(username):
             "accounttype":0,
             "clienttype":0
             }
-    url = "http://h5.foxwq.com/getFechInfo/wxnseed/txwq_fetch_personal_info"
+    url = "https://h5.foxwq.com/getFechInfo/wxnseed/txwq_fetch_personal_info"
     try:
         response = requests.get(url,params=values)
         return response.json()['uid']
@@ -49,15 +49,13 @@ def game_list(lastCode, username, uid):
  
     values = {
     "type": 4,
-    "lastCode": lastCode,
-    "FindUserName": username, 
-    "uid": uid, 
-    
-    "RelationTag": 0}
+    # "lastcode": lastCode,
+    "uid": uid,     
+    }
 
-    url = "http://happyapp.huanle.qq.com/cgi-bin/CommonMobileCGI/TXWQFetchChessList"
+    url = "https://h5.foxwq.com/yehuDiamond/chessbook_local/YHWQFetchChessList"
     try:
-        response = requests.post(url,data=values)
+        response = requests.get(url,params=values)
         response.encoding="utf-8"
         chesslist = response.json()['chesslist']
         for d in chesslist:
@@ -74,13 +72,14 @@ def game_list(lastCode, username, uid):
 
 def download_sgf(cid):
     values = {
-    "chessid": cid
+        "chessid": cid
     }
-    url = "http://happyapp.huanle.qq.com/cgi-bin/CommonMobileCGI/TXWQFetchChess"
+
+    url = "https://h5.foxwq.com/yehuDiamond/chessbook_local/YHWQFetchChess"
     sgf = ""
     for i in range(10):
         try:
-            response = requests.post(url,data=values)
+            response = requests.get(url,params=values)
             response.encoding="utf-8"
             sgf = response.json()['chess']
             break
@@ -104,7 +103,7 @@ def main():
         
         n = len(names)
         names.append("select all")
-        names.append("older games ...")
+        # names.append("older games ...")
 
         if n == 0:
             if lastCode == "":
